@@ -89,7 +89,7 @@ export default function Game() {
   let move = history.map((step, move) => {
     let description;
     if (move === currentMove) {
-      description = `You are at move #${move} (${step.xLocation}, ${step.yLocation})`;
+      description = move === 0 ? 'You are at move #0' : `You are at move #${move} (${step.xLocation}, ${step.yLocation})`;
     } else {
       description = move > 0 ? `Go to move #${move} (${history[move].xLocation}, ${history[move].yLocation})` : "Go to game start";
     }
