@@ -14,7 +14,7 @@ function Square({ value, onSquareClick, isHighLight }) {
 
 function Board({ size, squares, xIsNext, onPlay }) {
   function handleClick(i) {
-    if (squares[i] || calculateWinner(squares)) {
+    if (squares[i] || calculateWinner(squares, size)) {
       return;
     }
     let nextSquares = squares.slice();
@@ -22,7 +22,7 @@ function Board({ size, squares, xIsNext, onPlay }) {
     onPlay(nextSquares, parseInt(i / size), i % size);
   }
 
-  const winnerInf = calculateWinner(squares);
+  const winnerInf = calculateWinner(squares, size);
   let status = winnerInf
     ? `Winner: ${winnerInf.winner}`
     : `Next player: ${xIsNext ? "X" : "O"}`;
@@ -132,26 +132,52 @@ export default function Game() {
   );
 }
 
-function calculateWinner(squares) {
-  const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
+function calculateWinner(squares, size) {
+  // Number of consecutive squares needed to win
+  const winCondition = size >= 5 ? 5 : 3;
+
+  // Create winning lines for the grid size
+  const lines = [];
+
+  // Horizontal lines
+  for (let row = 0; row < size; row++) {
+    for (let col = 0; col <= size - winCondition; col++) {
+      lines.push(Array.from({ length: winCondition }, (_, index) => row * size + col + index));
+    }
+  }
+
+  // Vertical lines
+  for (let col = 0; col < size; col++) {
+    for (let row = 0; row <= size - winCondition; row++) {
+      lines.push(Array.from({ length: winCondition }, (_, index) => (row + index) * size + col));
+    }
+  }
+
+  // Main diagonal lines
+  for (let row = 0; row <= size - winCondition; row++) {
+    for (let col = 0; col <= size - winCondition; col++) {
+      lines.push(Array.from({ length: winCondition }, (_, index) => (row + index) * size + (col + index)));
+    }
+  }
+
+  // Anti-diagonal lines
+  for (let row = 0; row <= size - winCondition; row++) {
+    for (let col = winCondition - 1; col < size; col++) {
+      lines.push(Array.from({ length: winCondition }, (_, index) => (row + index) * size + (col - index)));
+    }
+  }
+
+  // Check for winning lines
   for (let i = 0; i < lines.length; i++) {
-    const [a, b, c] = lines[i];
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+    const line = lines[i];
+    if (squares[line[0]] && line.every(index => squares[index] === squares[line[0]])) {
       return {
-        winner: squares[a],
-        highlight: lines[i],
+        winner: squares[line[0]],
+        highlight: line,
       };
     }
   }
+
   return null;
 }
 
