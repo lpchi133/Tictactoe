@@ -1,0 +1,15 @@
+{
+  "short_name": "Tictactoe",
+  "name": "Tictactoe-IA1-21127019",
+  "icons": [
+    {
+      "src": "logo.png",
+      "type": "image/png",
+      "sizes": "225x225"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
